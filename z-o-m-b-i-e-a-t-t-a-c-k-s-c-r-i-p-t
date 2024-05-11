@@ -1,0 +1,218 @@
+-- made by 2xyyy discord 10/05/2024 / last update: 11/05/2024
+-- local SolaraScriptZA = loadstring(game:HttpGet("https://raw.githubusercontent.com/GhostDuckyy/UI-Libraries/main/Coasting%20Ui%20Lib/source.lua"))()
+local SolaraScriptZA = loadstring(game:HttpGet("https://raw.githubusercontent.com/dqtixz/Library-UI-Projeto-LKA-Scriptblox-Custom/main/Free"))()
+local Main = SolaraScriptZA:CreateTab("Main")
+local Combat = SolaraScriptZA:CreateTab("Combat")
+local Credits = SolaraScriptZA:CreateTab("Credits")
+local CombatCg = Combat:CreateSection("Main")
+local MainSection = Main:CreateSection("Farm")
+local ConfigSection = Main:CreateSection("Config")
+local HDVBFD = Credits:CreateSection("Credits")
+
+_G.farm2 = false
+_G.groundDistance = 0
+_G.dist = 100000 -- Altere o valor inicial de dist aqui
+_G.HeadSize = 2.5
+_G.autoequip = false
+
+HDVBFD:CreateButton("Credits (Click)", function()
+game.StarterGui:SetCore("SendNotification", {
+Title = "Made By 2xyyy Discord",
+Text = "Want help scripting? if you have any function like auto get power auto buy guns call me on discord - Suport: Solara, Mobile, Krampus",
+Duration = 5,
+})
+end)
+
+MainSection:CreateToggle("Auto-Farm", function(value)
+   _G.farm2 = value
+end)
+
+MainSection:CreateButton("Auto-Equip (V2)", function()
+  while true do
+ local player = game.Players.LocalPlayer
+    local backpack = player.Backpack
+
+    for _,item in pairs(backpack:GetChildren()) do
+        if item:IsA("Tool") then
+            item.Parent = player.Character
+        end
+    end
+    wait(1) end
+end)
+
+MainSection:CreateToggle("Auto-Equip (V1)", function(value)
+   _G.autoequip = value
+end)
+
+ConfigSection:CreateLabel("Farm-Warn", "-------------------")
+ConfigSection:CreateLabel("Farm-Warn", "Not Recomend Change")
+ConfigSection:CreateLabel("Farm-Warn", "(Search-Zombie Dist)")
+
+ConfigSection:CreateSlider("Ground Distance +", 0, 150, 0, false, function(value)
+   _G.groundDistance = value
+end)
+
+ConfigSection:CreateSlider("Ground Distance -", -150, 50, 0, false, function(value)
+   _G.groundDistance = value
+end)
+
+ConfigSection:CreateSlider("Search-Zombie Dist", 0, 250000, 100000, false, function(value)
+   _G.dist = value
+end)
+
+CombatCg:CreateSlider("Hitbox", 3, 50, 3, false, function(value)
+    _G.HeadSize = value
+end)
+
+CombatCg:CreateButton("Give All Guns (Beta)", function()
+  	for _,Thing in pairs(game.ReplicatedStorage.Guns:GetChildren()) do
+if Thing:IsA("Tool") then
+Thing.Parent = game.Players.LocalPlayer.Backpack
+end
+end  
+end)
+
+CombatCg:CreateButton("Give All Knife (Beta)", function()
+	for _,Thing in pairs(game.ReplicatedStorage.Knives:GetChildren()) do
+if Thing:IsA("Tool") then
+Thing.Parent = game.Players.LocalPlayer.Backpack
+end
+end
+end)
+
+    while wait() do
+       local bosses = game.Workspace.BossFolder:GetChildren()
+    for _, v in ipairs(bosses) do
+        if game.Workspace.enemies:FindFirstChild("Zombie") then
+            for i,v in pairs(game.Workspace.enemies:GetChildren()) do
+                wait()
+                if v:FindFirstChild("Head") then
+                    v.Head.CanCollide = false
+                    v.Head.Size = Vector3.new(_G.HeadSize,_G.HeadSize,_G.HeadSize)
+                    v.Head.CFrame = v.Torso.CFrame * CFrame.new(0,_G.HeadSize/2,0)
+                end
+            end
+        end
+    end
+
+local function modifyHitbox()
+    -- Ajustando o hitbox dos inimigos
+    local enemies = workspace.enemies:GetChildren()
+    for _, v in ipairs(enemies) do
+        if v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") then
+            v.HumanoidRootPart.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+            v.HumanoidRootPart.Material = "Neon"
+            v.HumanoidRootPart.BrickColor = BrickColor.new("Really blue")
+            v.HumanoidRootPart.Transparency = 0.92
+            v.HumanoidRootPart.CanCollide = false
+        end
+    end
+    
+    -- Ajustando o hitbox dos chefes (bosses)
+    local bosses = game.Workspace.BossFolder:GetChildren()
+    for _, v in ipairs(bosses) do
+        if v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") then
+            v.HumanoidRootPart.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+            v.HumanoidRootPart.Material = "Neon"
+            v.HumanoidRootPart.BrickColor = BrickColor.new("Really blue")
+            v.HumanoidRootPart.Transparency = 0.92
+            v.HumanoidRootPart.CanCollide = false
+        end
+    end
+end
+
+spawn(function()
+    while true do
+        modifyHitbox()
+        wait(0.1)
+    end
+end)
+
+local function autoequip()
+    local player = game.Players.LocalPlayer
+    local backpack = player.Backpack
+
+    for _,item in pairs(backpack:GetChildren()) do
+        if item:IsA("Tool") then
+            item.Parent = player.Character
+        end
+    end
+end
+
+spawn(function()
+    while true do
+        if _G.autoequip then
+            autoequip()
+        end
+        wait(0.1)
+    end
+end)
+
+local Player = game:GetService("Players").LocalPlayer
+
+local function getNearest()
+    local nearest, dist = nil, _G.dist
+    for _,v in pairs(game.Workspace.BossFolder:GetChildren()) do
+        if v:FindFirstChild("Head") then
+            local m = (Player.Character.Head.Position - v.Head.Position).magnitude
+            if m < dist then
+                dist = m
+                nearest = v
+            end
+        end
+    end
+    for _,v in pairs(game.Workspace.enemies:GetChildren()) do
+        if v:FindFirstChild("Head") then
+            local m = (Player.Character.Head.Position - v.Head.Position).magnitude
+            if m < dist then
+                dist = m
+                nearest = v
+            end
+        end
+    end
+    return nearest
+end
+
+Player.Chatted:Connect(function(m)
+    if m:lower() == ";autofarm false" then
+        _G.farm2 = false
+    elseif m:lower() == ";autofarm true" then
+        _G.farm2 = true
+    end
+end)
+
+_G.globalTarget = nil
+game:GetService("RunService").RenderStepped:Connect(function()
+    if _G.farm2 == true then
+        local target = getNearest()
+        if target and target:FindFirstChild("Head") then
+            game:GetService("Workspace").CurrentCamera.CFrame = CFrame.new(game:GetService("Workspace").CurrentCamera.CFrame.p, target.Head.Position)
+            Player.Character.HumanoidRootPart.CFrame =
+            (target.HumanoidRootPart.CFrame * CFrame.new(0, _G.groundDistance, 9))
+            _G.globalTarget = target
+        end
+    end
+end)
+
+spawn(function()
+    while wait() do
+        game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0,0,0)
+        game.Players.LocalPlayer.Character.Torso.Velocity = Vector3.new(0,0,0)
+    end
+end)
+
+while wait() do
+    if _G.farm2 == true and _G.globalTarget ~= nil and _G.globalTarget:FindFirstChild("Head") and Player.Character:FindFirstChildOfClass("Tool") then
+        local target = _G.globalTarget
+        game.ReplicatedStorage.Gun:FireServer({
+            ["Normal"] = Vector3.new(0, 0, 0),
+            ["Direction"] = target.Head.Position,
+            ["Name"] = Player.Character:FindFirstChildOfClass("Tool").Name,
+            ["Hit"] = target.Head,
+            ["Origin"] = target.Head.Position,
+            ["Pos"] = target.Head.Position,
+        })
+        wait()
+    end
+end
+end
