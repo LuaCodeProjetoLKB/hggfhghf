@@ -1,5 +1,7 @@
 -- made by 2xyyy discord 10/05/2024 / last update: 11/05/2024
 -- local SolaraScriptZA = loadstring(game:HttpGet("https://raw.githubusercontent.com/GhostDuckyy/UI-Libraries/main/Coasting%20Ui%20Lib/source.lua"))()
+-- made by 2xyyy discord 10/05/2024 / last update: 11/05/2024
+-- local SolaraScriptZA = loadstring(game:HttpGet("https://raw.githubusercontent.com/GhostDuckyy/UI-Libraries/main/Coasting%20Ui%20Lib/source.lua"))()
 local SolaraScriptZA = loadstring(game:HttpGet("https://raw.githubusercontent.com/dqtixz/Library-UI-Projeto-LKA-Scriptblox-Custom/main/Free"))()
 local Main = SolaraScriptZA:CreateTab("Main")
 local Combat = SolaraScriptZA:CreateTab("Combat")
@@ -15,12 +17,158 @@ _G.dist = 100000 -- Altere o valor inicial de dist aqui
 _G.HeadSize = 2.5
 _G.autoequip = false
 
+HDVBFD:CreateButton("Rainbow (Beta)", function()
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- Função para gerar uma cor aleatória com valores mais altos
+local function randomColor()
+    return Color3.new(math.random(0, 255)/255, math.random(0, 255)/255, math.random(0, 255)/255)
+end
+
+-- Função para aplicar uma cor suavemente
+local function lerpColor(startColor, endColor, alpha)
+    return startColor:Lerp(endColor, alpha)
+end
+
+-- Tempo de transição (em segundos)
+local transitionTime = 5
+
+-- Remover camisa e calça do jogador
+character.Shirt:Destroy()
+character.Pants:Destroy()
+
+-- Loop infinito para alterar as cores do corpo
+while true do
+    local startTime = tick()
+    local endTime = startTime + transitionTime
+    
+    local startColor = randomColor()
+    local endColor = randomColor()
+    
+    while tick() < endTime do
+        local elapsedTime = tick() - startTime
+        local alpha = elapsedTime / transitionTime
+        
+        for _, part in ipairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.Color = lerpColor(startColor, endColor, alpha)
+            end
+        end
+        
+        wait()
+    end
+end
+
+
+end)
+HDVBFD:CreateButton("Esp (Beta)", function()
+ -- Função para adicionar ESP (Nomes acima da cabeça) com destaque para inimigos
+local function addEnemyESP(enemy)
+    local BillboardGui = Instance.new("BillboardGui")
+    BillboardGui.Name = "EnemyESP"
+    BillboardGui.Size = UDim2.new(0, 100, 0, 40)
+    BillboardGui.Adornee = enemy
+    BillboardGui.AlwaysOnTop = true
+    BillboardGui.StudsOffset = Vector3.new(0, 3, 0)
+    BillboardGui.Parent = enemy
+    
+    local TextLabel = Instance.new("TextLabel")
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.Size = UDim2.new(1, 0, 1, 0)
+    TextLabel.TextColor3 = Color3.new(1, 0, 0) -- Cor do nome
+    TextLabel.TextStrokeTransparency = 0.5
+    TextLabel.TextStrokeColor3 = Color3.new(0, 0, 0) -- Cor do contorno
+    TextLabel.TextScaled = true
+    TextLabel.Font = Enum.Font.SourceSansBold
+    TextLabel.Text = "Zombie" -- Texto exibido (pode ser o nome do inimigo)
+    TextLabel.Parent = BillboardGui
+    
+    -- Adiciona um destaque ao redor do nome
+    local Highlight = Instance.new("ImageLabel")
+    Highlight.Name = "Highlight"
+    Highlight.BackgroundTransparency = 1
+    Highlight.Size = UDim2.new(1, 6, 1, 6)
+    Highlight.Position = UDim2.new(-0.5, -3, -0.5, -3)
+    Highlight.Image = "rbxassetid://4748513315" -- Imagem de destaque (pode ser um arquivo local)
+    Highlight.ImageColor3 = Color3.new(1, 1, 1) -- Cor do destaque (branco)
+    Highlight.Parent = BillboardGui
+end
+
+-- Função para adicionar ESP a todos os inimigos existentes
+local function addAllEnemyESP()
+    local enemies = workspace.enemies:GetChildren()
+    for _, enemy in ipairs(enemies) do
+        addEnemyESP(enemy)
+    end
+end
+
+-- Adicionar ESP aos inimigos existentes
+addAllEnemyESP()
+
+-- Evento para adicionar ESP aos inimigos recém-criados
+workspace.enemies.ChildAdded:Connect(function(enemy)
+    addEnemyESP(enemy)
+end)
+
+-- Função para adicionar ESP com destaque para chefes
+local function addBossESP(boss)
+    local BillboardGui = Instance.new("BillboardGui")
+    BillboardGui.Name = "BossESP"
+    BillboardGui.Size = UDim2.new(0, 100, 0, 40)
+    BillboardGui.Adornee = boss
+    BillboardGui.AlwaysOnTop = true
+    BillboardGui.StudsOffset = Vector3.new(0, 3, 0)
+    BillboardGui.Parent = boss
+    
+    local TextLabel = Instance.new("TextLabel")
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.Size = UDim2.new(1, 0, 1, 0)
+    TextLabel.TextColor3 = Color3.new(0, 1, 0) -- Cor do nome
+    TextLabel.TextStrokeTransparency = 0.5
+    TextLabel.TextStrokeColor3 = Color3.new(0, 0, 0) -- Cor do contorno
+    TextLabel.TextScaled = true
+    TextLabel.Font = Enum.Font.SourceSansBold
+    TextLabel.Text = "Boss" -- Texto exibido (pode ser o nome do chefe)
+    TextLabel.Parent = BillboardGui
+    
+    -- Adiciona um destaque ao redor do nome
+    local Highlight = Instance.new("ImageLabel")
+    Highlight.Name = "Highlight"
+    Highlight.BackgroundTransparency = 1
+    Highlight.Size = UDim2.new(1, 6, 1, 6)
+    Highlight.Position = UDim2.new(-0.5, -3, -0.5, -3)
+    Highlight.Image = "rbxassetid://4748513315" -- Imagem de destaque (pode ser um arquivo local)
+    Highlight.ImageColor3 = Color3.new(1, 1, 1) -- Cor do destaque (branco)
+    Highlight.Parent = BillboardGui
+end
+
+-- Função para adicionar ESP com destaque para todos os chefes existentes
+local function addAllBossESP()
+    local bosses = game.Workspace.BossFolder:GetChildren()
+    for _, boss in ipairs(bosses) do
+        addBossESP(boss)
+    end
+end
+
+-- Adicionar ESP com destaque para os chefes existentes
+addAllBossESP()
+
+-- Evento para adicionar ESP com destaque para os chefes recém-criados
+game.Workspace.BossFolder.ChildAdded:Connect(function(boss)
+    addBossESP(boss)
+end)
+
+  end)
+
 HDVBFD:CreateButton("Credits (Click)", function()
+  while true do
 game.StarterGui:SetCore("SendNotification", {
 Title = "Made By 2xyyy Discord",
 Text = "Want help scripting? if you have any function like auto get power auto buy guns call me on discord - Suport: Solara, Mobile, Krampus",
 Duration = 5,
 })
+wait(5) end
 end)
 
 MainSection:CreateToggle("Auto-Farm", function(value)
