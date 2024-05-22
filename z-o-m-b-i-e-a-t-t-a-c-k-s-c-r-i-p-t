@@ -1,8 +1,450 @@
--- made by 2xyyy discord 10/05/2024 / last update: 11/05/2024
--- local SolaraScriptZA = loadstring(game:HttpGet("https://raw.githubusercontent.com/GhostDuckyy/UI-Libraries/main/Coasting%20Ui%20Lib/source.lua"))()
--- made by 2xyyy discord 10/05/2024 / last update: 11/05/2024
--- local SolaraScriptZA = loadstring(game:HttpGet("https://raw.githubusercontent.com/GhostDuckyy/UI-Libraries/main/Coasting%20Ui%20Lib/source.lua"))()
 local SolaraScriptZA = loadstring(game:HttpGet("https://raw.githubusercontent.com/dqtixz/Library-UI-Projeto-LKA-Scriptblox-Custom/main/Free"))()
+local Main = SolaraScriptZA:CreateTab("Main")
+local Combat = SolaraScriptZA:CreateTab("Combat")
+local Credits = SolaraScriptZA:CreateTab("Credits")
+local CombatCg = Combat:CreateSection("Main")
+local MainSection = Main:CreateSection("Farm")
+local ConfigSection = Main:CreateSection("Config")
+local HDVBFD = Credits:CreateSection("Credits")
+
+_G.farm2 = false
+_G.groundDistance = 0
+_G.dist = 100000
+_G.HeadSize = 2.5
+_G.autoequip = false
+_G.AutoGetPowerups = false
+
+HDVBFD:CreateButton("Rainbow (Beta)", function()
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- Função para gerar uma cor aleatória com valores mais altos
+local function randomColor()
+    return Color3.new(math.random(0, 255)/255, math.random(0, 255)/255, math.random(0, 255)/255)
+end
+
+-- Função para aplicar uma cor suavemente
+local function lerpColor(startColor, endColor, alpha)
+    return startColor:Lerp(endColor, alpha)
+end
+
+-- Tempo de transição (em segundos)
+local transitionTime = 5
+
+-- Remover camisa e calça do jogador
+character.Shirt:Destroy()
+character.Pants:Destroy()
+
+-- Loop infinito para alterar as cores do corpo
+while true do
+    local startTime = tick()
+    local endTime = startTime + transitionTime
+    
+    local startColor = randomColor()
+    local endColor = randomColor()
+    
+    while tick() < endTime do
+        local elapsedTime = tick() - startTime
+        local alpha = elapsedTime / transitionTime
+        
+        for _, part in ipairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.Color = lerpColor(startColor, endColor, alpha)
+            end
+        end
+        
+        wait()
+    end
+end
+
+
+end)
+HDVBFD:CreateButton("Esp (Beta)", function()
+ -- Função para adicionar ESP (Nomes acima da cabeça) com destaque para inimigos
+local function addEnemyESP(enemy)
+    local BillboardGui = Instance.new("BillboardGui")
+    BillboardGui.Name = "EnemyESP"
+    BillboardGui.Size = UDim2.new(0, 100, 0, 40)
+    BillboardGui.Adornee = enemy
+    BillboardGui.AlwaysOnTop = true
+    BillboardGui.StudsOffset = Vector3.new(0, 3, 0)
+    BillboardGui.Parent = enemy
+    
+    local TextLabel = Instance.new("TextLabel")
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.Size = UDim2.new(1, 0, 1, 0)
+    TextLabel.TextColor3 = Color3.new(1, 0, 0) -- Cor do nome
+    TextLabel.TextStrokeTransparency = 0.5
+    TextLabel.TextStrokeColor3 = Color3.new(0, 0, 0) -- Cor do contorno
+    TextLabel.TextScaled = true
+    TextLabel.Font = Enum.Font.SourceSansBold
+    TextLabel.Text = "Zombie" -- Texto exibido (pode ser o nome do inimigo)
+    TextLabel.Parent = BillboardGui
+    
+    -- Adiciona um destaque ao redor do nome
+    local Highlight = Instance.new("ImageLabel")
+    Highlight.Name = "Highlight"
+    Highlight.BackgroundTransparency = 1
+    Highlight.Size = UDim2.new(1, 6, 1, 6)
+    Highlight.Position = UDim2.new(-0.5, -3, -0.5, -3)
+    Highlight.Image = "rbxassetid://4748513315" -- Imagem de destaque (pode ser um arquivo local)
+    Highlight.ImageColor3 = Color3.new(1, 1, 1) -- Cor do destaque (branco)
+    Highlight.Parent = BillboardGui
+end
+
+-- Função para adicionar ESP a todos os inimigos existentes
+local function addAllEnemyESP()
+    local enemies = workspace.enemies:GetChildren()
+    for _, enemy in ipairs(enemies) do
+        addEnemyESP(enemy)
+    end
+end
+
+-- Adicionar ESP aos inimigos existentes
+addAllEnemyESP()
+
+-- Evento para adicionar ESP aos inimigos recém-criados
+workspace.enemies.ChildAdded:Connect(function(enemy)
+    addEnemyESP(enemy)
+end)
+
+-- Função para adicionar ESP com destaque para chefes
+local function addBossESP(boss)
+    local BillboardGui = Instance.new("BillboardGui")
+    BillboardGui.Name = "BossESP"
+    BillboardGui.Size = UDim2.new(0, 100, 0, 40)
+    BillboardGui.Adornee = boss
+    BillboardGui.AlwaysOnTop = true
+    BillboardGui.StudsOffset = Vector3.new(0, 3, 0)
+    BillboardGui.Parent = boss
+    
+    local TextLabel = Instance.new("TextLabel")
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.Size = UDim2.new(1, 0, 1, 0)
+    TextLabel.TextColor3 = Color3.new(0, 1, 0) -- Cor do nome
+    TextLabel.TextStrokeTransparency = 0.5
+    TextLabel.TextStrokeColor3 = Color3.new(0, 0, 0) -- Cor do contorno
+    TextLabel.TextScaled = true
+    TextLabel.Font = Enum.Font.SourceSansBold
+    TextLabel.Text = "Boss" -- Texto exibido (pode ser o nome do chefe)
+    TextLabel.Parent = BillboardGui
+    
+    -- Adiciona um destaque ao redor do nome
+    local Highlight = Instance.new("ImageLabel")
+    Highlight.Name = "Highlight"
+    Highlight.BackgroundTransparency = 1
+    Highlight.Size = UDim2.new(1, 6, 1, 6)
+    Highlight.Position = UDim2.new(-0.5, -3, -0.5, -3)
+    Highlight.Image = "rbxassetid://4748513315" -- Imagem de destaque (pode ser um arquivo local)
+    Highlight.ImageColor3 = Color3.new(1, 1, 1) -- Cor do destaque (branco)
+    Highlight.Parent = BillboardGui
+end
+
+-- Função para adicionar ESP com destaque para todos os chefes existentes
+local function addAllBossESP()
+    local bosses = game.Workspace.BossFolder:GetChildren()
+    for _, boss in ipairs(bosses) do
+        addBossESP(boss)
+    end
+end
+
+-- Adicionar ESP com destaque para os chefes existentes
+addAllBossESP()
+
+-- Evento para adicionar ESP com destaque para os chefes recém-criados
+game.Workspace.BossFolder.ChildAdded:Connect(function(boss)
+    addBossESP(boss)
+end)
+
+end)
+
+HDVBFD:CreateButton("Credits (Click)", function()
+game.StarterGui:SetCore("SendNotification", {
+Title = "Made By 2xyyy Discord",
+Text = "Want help scripting? if you have any function like auto buy guns or others call me on discord - Suport: Solara, Mobile, Krampus",
+Duration = 5,
+})
+end)
+
+HDVBFD:CreateButton("Credits (Click-loop)", function()
+  while true do
+game.StarterGui:SetCore("SendNotification", {
+Title = "Made By 2xyyy Discord",
+Text = "Want help scripting? if you have any function like auto buy guns or others call me on discord - Suport: Solara, Mobile, Krampus",
+Duration = 5,
+})
+wait(5) end
+end)
+
+HDVBFD:CreateButton("Version Script", function()
+game.StarterGui:SetCore("SendNotification", {
+Title = "Script Status: Online",
+Text = "Last Update 22/05/2024 - 14:45 (brazil) - script Version: 0.0.2 - antiban = Dont talk on chat and no ban :D",
+Duration = 5,
+})
+end)
+
+MainSection:CreateToggle("Auto-Farm", function(value)
+   _G.farm2 = value
+end)
+MainSection:CreateToggle("Auto-GetPowersups (V1)", function(value)
+_G.AutoGetPowerups = value
+end)
+
+MainSection:CreateButton("Auto-GetPowersups", function()
+  while true do
+powerups = game.workspace.Powerups
+print(powerups)
+for i,v in pairs(powerups:GetChildren()) do 
+print(v.Part.TouchInterest)
+firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart,v.Part,0)
+end
+task.wait()
+  end
+end)
+
+--[[MainSection:CreateButton("Auto-Equip (V2)", function()
+  while true do
+ local player = game.Players.LocalPlayer
+    local backpack = player.Backpack
+
+    for _,item in pairs(backpack:GetChildren()) do
+        if item:IsA("Tool") then
+            item.Parent = player.Character
+        end
+    end
+    wait(1) end
+end)]]
+
+MainSection:CreateToggle("Auto-Equip (V1)", function(value)
+   _G.autoequip = value
+end)
+
+MainSection:CreateSlider("Walkspeed", 0, 150, 16, false, function(value)
+ -- game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
+ game:GetService('Players').LocalPlayer.Character.Humanoid.WalkSpeed = value
+end)
+
+MainSection:CreateSlider("Jumppower", 0, 250, 50, false, function(value)
+game:GetService('Players').LocalPlayer.Character.Humanoid.JumpPower = value
+end)
+
+ConfigSection:CreateLabel("Farm-Warn", "-------------------")
+ConfigSection:CreateLabel("Farm-Warn", "Not Recomend Change")
+ConfigSection:CreateLabel("Farm-Warn", "(Search-Zombie Dist)")
+
+ConfigSection:CreateSlider("Ground Distance +", 0, 150, 0, false, function(value)
+   _G.groundDistance = value
+end)
+
+ConfigSection:CreateSlider("Ground Distance -", -150, 50, 0, false, function(value)
+   _G.groundDistance = value
+end)
+
+ConfigSection:CreateSlider("Search-Zombie Dist", 0, 250000, 100000, false, function(value)
+   _G.dist = value
+end)
+
+CombatCg:CreateSlider("Hitbox", 3, 50, 3, false, function(value)
+    _G.HeadSize = value
+end)
+
+CombatCg:CreateButton("Give All Guns (Beta)", function()
+  	for _,Thing in pairs(game.ReplicatedStorage.Guns:GetChildren()) do
+if Thing:IsA("Tool") then
+Thing.Parent = game.Players.LocalPlayer.Backpack
+end
+end  
+end)
+
+CombatCg:CreateButton("Give All Knife (Beta)", function()
+	for _,Thing in pairs(game.ReplicatedStorage.Knives:GetChildren()) do
+if Thing:IsA("Tool") then
+Thing.Parent = game.Players.LocalPlayer.Backpack
+end
+end
+end)
+
+    while wait() do
+       local bosses = game.Workspace.BossFolder:GetChildren()
+    for _, v in ipairs(bosses) do
+        if game.Workspace.enemies:FindFirstChild("Zombie") then
+            for i,v in pairs(game.Workspace.enemies:GetChildren()) do
+                wait()
+                if v:FindFirstChild("Head") then
+                    v.Head.CanCollide = false
+                    v.Head.Size = Vector3.new(_G.HeadSize,_G.HeadSize,_G.HeadSize)
+                    v.Head.CFrame = v.Torso.CFrame * CFrame.new(0,_G.HeadSize/2,0)
+                end
+            end
+        end
+    end
+
+local function modifyHitbox()
+    -- Ajustando o hitbox dos inimigos
+    local enemies = workspace.enemies:GetChildren()
+    for _, v in ipairs(enemies) do
+        if v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") then
+            v.HumanoidRootPart.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+            v.HumanoidRootPart.Material = "Neon"
+            v.HumanoidRootPart.BrickColor = BrickColor.new("Really blue")
+            v.HumanoidRootPart.Transparency = 0.92
+            v.HumanoidRootPart.CanCollide = false
+        end
+    end
+    
+    -- Ajustando o hitbox dos chefes (bosses)
+    local bosses = game.Workspace.BossFolder:GetChildren()
+    for _, v in ipairs(bosses) do
+        if v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") then
+            v.HumanoidRootPart.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+            v.HumanoidRootPart.Material = "Neon"
+            v.HumanoidRootPart.BrickColor = BrickColor.new("Really blue")
+            v.HumanoidRootPart.Transparency = 0.92
+            v.HumanoidRootPart.CanCollide = false
+        end
+    end
+end
+
+spawn(function()
+    while true do
+        modifyHitbox()
+        wait(0.1)
+    end
+end)
+
+local function autoequip()
+    local player = game.Players.LocalPlayer
+    local backpack = player.Backpack
+
+    for _,item in pairs(backpack:GetChildren()) do
+        if item:IsA("Tool") then
+            item.Parent = player.Character
+        end
+    end
+end
+
+local function autogetpowerupscript()
+powerups = game.workspace.Powerups
+print(powerups)
+for i,v in pairs(powerups:GetChildren()) do 
+print(v.Part.TouchInterest)
+firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart,v.Part,0)
+    end
+end
+
+spawn(function()
+    while true do
+        if _G.AutoGetPowerups then
+            autogetpowerupscript()
+        end
+        wait(0.1)
+    end
+end)
+
+--[[spawn(function()
+   -- while true do
+        if _G.autogetpowerups ~= true then
+       --   while value do
+            autogetpowerupscript()
+      --      end
+        end
+        wait(0.1)
+  --  end
+end)]]
+
+--[[spawn(function()
+  while false ~= value do
+    if _G.autogetpowerups ~= true then
+    end
+    wait(0.1)
+  end
+  end)]]
+
+spawn(function()
+    while true do
+        if _G.autoequip then
+            autoequip()
+        end
+        wait(0.1)
+    end
+end)
+
+local Player = game:GetService("Players").LocalPlayer
+
+local function getNearest()
+    local nearest, dist = nil, _G.dist
+    for _,v in pairs(game.Workspace.BossFolder:GetChildren()) do
+        if v:FindFirstChild("Head") then
+            local m = (Player.Character.Head.Position - v.Head.Position).magnitude
+            if m < dist then
+                dist = m
+                nearest = v
+            end
+        end
+    end
+    for _,v in pairs(game.Workspace.enemies:GetChildren()) do
+        if v:FindFirstChild("Head") then
+            local m = (Player.Character.Head.Position - v.Head.Position).magnitude
+            if m < dist then
+                dist = m
+                nearest = v
+            end
+        end
+    end
+    return nearest
+end
+
+Player.Chatted:Connect(function(m)
+    if m:lower() == ";autofarm false" then
+        _G.farm2 = false
+    elseif m:lower() == ";autofarm true" then
+        _G.farm2 = true
+    end
+end)
+
+_G.globalTarget = nil
+game:GetService("RunService").RenderStepped:Connect(function()
+    if _G.farm2 == true then
+        local target = getNearest()
+        if target and target:FindFirstChild("Head") then
+            game:GetService("Workspace").CurrentCamera.CFrame = CFrame.new(game:GetService("Workspace").CurrentCamera.CFrame.p, target.Head.Position)
+            Player.Character.HumanoidRootPart.CFrame =
+            (target.HumanoidRootPart.CFrame * CFrame.new(0, _G.groundDistance, 9))
+            _G.globalTarget = target
+        end
+    end
+end)
+
+spawn(function()
+    while wait() do
+        game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0,0,0)
+        game.Players.LocalPlayer.Character.Torso.Velocity = Vector3.new(0,0,0)
+    end
+end)
+
+while wait() do
+    if _G.farm2 == true and _G.globalTarget ~= nil and _G.globalTarget:FindFirstChild("Head") and Player.Character:FindFirstChildOfClass("Tool") then
+        local target = _G.globalTarget
+        game.ReplicatedStorage.Gun:FireServer({
+            ["Normal"] = Vector3.new(0, 0, 0),
+            ["Direction"] = target.Head.Position,
+            ["Name"] = Player.Character:FindFirstChildOfClass("Tool").Name,
+            ["Hit"] = target.Head,
+            ["Origin"] = target.Head.Position,
+            ["Pos"] = target.Head.Position,
+        })
+        wait()
+    end
+end
+end
+
+
+-- made by 2xyyy discord 10/05/2024 / last update: 11/05/2024
+-- local SolaraScriptZA = loadstring(game:HttpGet("https://raw.githubusercontent.com/GhostDuckyy/UI-Libraries/main/Coasting%20Ui%20Lib/source.lua"))()
+-- made by 2xyyy discord 10/05/2024 / last update: 11/05/2024
+-- local SolaraScriptZA = loadstring(game:HttpGet("https://raw.githubusercontent.com/GhostDuckyy/UI-Libraries/main/Coasting%20Ui%20Lib/source.lua"))()
+--[[local SolaraScriptZA = loadstring(game:HttpGet("https://raw.githubusercontent.com/dqtixz/Library-UI-Projeto-LKA-Scriptblox-Custom/main/Free"))()
 local Main = SolaraScriptZA:CreateTab("Main")
 local Combat = SolaraScriptZA:CreateTab("Combat")
 local Credits = SolaraScriptZA:CreateTab("Credits")
@@ -363,4 +805,4 @@ while wait() do
         wait()
     end
 end
-end
+end]]
